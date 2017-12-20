@@ -1,0 +1,37 @@
+{% extends "eshopper/base.html" %}
+
+{% load static %}
+
+{% block content %}
+
+	<h1>Checkout</h1>
+
+	<div class="order-info">
+		<h3>Your order</h3>
+		<ul>
+			{% for item in cart %}
+				<li>{{ item.quantity }}x {{ item.product.name }}<span>${{ item.total_price }}</span></li>
+			{% endfor %}
+				
+		</ul>
+		<p>Total: ${{ cart.get_total_price }}</p>
+
+	</div>
+	<form action="." method="post" class="order-form">
+		
+		{% for field in form %}
+      <p>
+        {{ field.label_tag }}<br>
+        {{ field }}
+        {% if field.help_text %}
+          <small style="display: none">{{ field.help_text }}</small>
+        {% endif %}
+        {% for error in field.errors %}
+          <p style="color: red">{{ error }}</p>
+        {% endfor %}
+      </p>
+      {% endfor %}
+		<p><input type="submit"  value="place order" name=""></p>
+		{% csrf_token %}
+	</form>
+{% endblock %}	

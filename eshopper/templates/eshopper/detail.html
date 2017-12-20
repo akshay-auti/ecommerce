@@ -1,0 +1,66 @@
+{% extends "eshopper/base.html" %}
+
+{% load static %}
+
+
+
+
+{% block content %}
+<section>
+ <div class="container">
+  <div class="row">
+   <div class="col-sm-3">
+	<div class="left-sidebar">
+	 <h2>Category</h2>
+	  <div class="panel-group category-products" id="accordian">
+	   {% for c in categories %}
+		<div class="panel panel-default">
+		 <div class="panel-heading">
+		  <h4 class="panel-title" {% if category.slug == c.slug %} class="selected" 
+	   {% endif %}>
+		   <a href="{{ c.get_absolute_url }}">{{ c.name }}</a>
+		  </h4>
+		 </div>
+		</div>
+	   {% endfor %}
+	  </div>
+	</div>
+   </div>
+   <div class="col-sm-9 padding-right">
+	<div class="product-details"><!--product-details-->
+	 <div class="col-sm-5">
+	  <div class="view-product">
+	  {% if product.image %}
+	  <img src="{{ product.image.url }}">
+	  {% else %}
+	  <img src="{% static 'images/404/404.png' %}">
+	  {% endif %}
+	  <!-- <h3>ZOOM</h3> -->
+	  </div>
+	 </div>
+	 <div class="col-sm-7">
+	  <div class="product-information"><!--/product-information-->
+	   <img src="images/product-details/new.jpg" class="newarrival" alt="" />
+	   <h2>{{ product.name }}</h2>
+	   <img src="images/product-details/rating.png" alt="" />
+	   
+		<span>${{ product.price }}</span>
+		 <form action="{% url 'eshopper:cart_add' product.id %}" method="post">
+		 {{ cart_product_form }}
+		 {% csrf_token %}
+		 <input type="submit" value="Add to cart">
+		 </form>
+	   
+	   <b>Availability:{{ product.quantity }}</b> In Stock
+	   <p><b>Condition:</b> New</p>
+	   <p><b>Brand:</b> E-SHOPPER</p>
+	   <p><b>Description:</b>{{ product.short_description|linebreaks }}</p>
+	  </div><!--/product-information-->
+	 </div>
+	</div><!--/product-details-->
+   </div>
+  </div>
+ </div>
+</section>
+
+{% endblock content %}	

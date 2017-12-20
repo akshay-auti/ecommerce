@@ -1,0 +1,72 @@
+{% extends "eshopper/base.html" %}
+
+{% load static %}
+
+{% block title %}
+	Your shopping cart 
+{% endblock title %}
+
+{% block content %}
+<section id="cart_items">
+ <div class="container">
+  <div class="breadcrumbs">
+   <ol class="breadcrumb">
+	<li><a href="/">Home</a></li>
+	<li class="active">Shopping Cart</li>
+   </ol>
+  </div>
+  <div class="table-responsive cart_info">
+   <table class="table table-condensed">
+   	<thead>
+	 <tr class="cart_menu">
+	  <td class="image">Image</td>
+	  <td class="description">Product</td>
+	  <td class="quantity">Quantity</td>
+	  <td class="price">Unit Price</td>
+	  <td class="price">Price</td>
+	  <td class="cart_delete">Remove</td>
+	 </tr>
+	</thead>
+	<tbody>
+	{% for item in cart %}
+	 {% with product=item.product %}
+	  <tr>
+	   <td class="cart_product">
+	    <a href="{{ product.get_absolute_url }}">
+		 <img src="{% if product.image %}{{ product.image.url }}{% else %}{% static 'imagee/404/404.png'%}{% endif %}">
+		</a>
+	   </td>
+	   <td class="cart_description"><h4>{{ product.name }}</h4></td>
+	   <td class="cart_quantity">
+		<div class="cart_quantity_button">
+		 <form action="{% url 'eshopper:cart_add' product.id %}" method='post'>
+		  {{ item.update_quantity_form.quantity }}
+		  {{ item.update_quantity_form.update }}
+		  <input class="btn btn-default update" type="submit" name="" value="Update"/>
+		  {% csrf_token %}
+		 </form>
+		</div>
+	   </td>
+	   <td class="cart_total_price">${{ item.price }}</td>
+	   <td class="cart_total_price">${{ item.total_price }}</td>
+	   <td class="cart_delete"><a class="cart_quantity_delete" href="{% url 'eshopper:cart_remove' product.id %}"><i class="fa fa-times"></i></a></td>
+	  </tr>
+	 {% endwith %}
+	{% endfor %}
+    </tbody>
+   </table>
+   <div class="col-sm-6">
+	<div class="total_area">
+	 <ul>	
+	  <li>Total<span>${{ cart.get_total_price }}</span></li>
+	 </ul> 	
+	</div>	
+	<a class="btn btn-default check_out" href="{% url 'eshopper:product_list' %}" class='button-right'>Continue Shopping</a>
+	{% if cart %}
+	<a class="btn btn-default check_out" href="{% url 'eshopper:order_create' %}" class='button'>Checkout</a>
+	{% endif %}
+   </div>
+  </div>
+ </div>
+</section>
+{% endblock %}	
