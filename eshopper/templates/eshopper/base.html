@@ -59,7 +59,7 @@
         <div class="row">
           <div class="col-sm-4">
             <div class="logo pull-left">
-              <a href="index.html"><img src="images/home/logo.png" alt="" /></a>
+              <a href="/"><img src="{% static 'images/home/logo.png' %}" alt="" /></a>
             </div>
             <div class="btn-group pull-right">
               <div class="btn-group">
@@ -88,17 +88,23 @@
           <div class="col-sm-8">
             <div class="shop-menu pull-right">
               <ul class="nav navbar-nav">
-                <li><a href="#"><i class="fa fa-star"></i> Wishlist</a></li>
-                <li><a href="checkout.html"><i class="fa fa-crosshairs"></i> Checkout</a></li>
+               <!--  <li><a href="#"><i class="fa fa-star"></i> Wishlist</a></li> -->
+                <li><a href="{% url 'eshopper:order_create' %}"><i class="fa fa-crosshairs"></i> Checkout</a></li>
                 <li><a href="{% url 'eshopper:cart_detail' %}"><i class="fa fa-shopping-cart"></i> Cart</a></li>
                  {% if user.is_authenticated %}
                   <li><a href="/logout/"><i class="fa fa-unlock"></i> Logout</a></li>
                   <li><a href="#"><i class="fa fa-user"></i> Account</a></li>
                  {% else %}
-                  <li><a href="/login/"><i class="fa fa-lock"></i> Login</a></li>
-                  <li><a href="{% url 'eshopper:signup' %}"><i class="fa fa-lock"></i> Signup</a></li>
+                  <!-- <li><a href="/login/"><i class="fa fa-lock"></i> Login</a></li> -->
+                  
+                  
+                  <li><a href="{% url 'eshopper:signup' %}"><i class="fa fa-lock"></i> Login</a></li>
+                  
                  {% endif %}  
               </ul>
+              <!-- {% if request.user.is_authenticated %}
+                  <p>Welcome <strong>{{ request.user.username }}</strong></p>
+              {% endif %}     -->
             </div>
           </div>
         </div>
@@ -120,30 +126,41 @@
             <div class="mainmenu pull-left">
               <ul class="nav navbar-nav collapse navbar-collapse">
                 <li><a href="/" class="active">Home</a></li>
-                <li class="dropdown"><a href="#">Shop<i class="fa fa-angle-down"></i></a>
+                <li class="dropdown"><a href="">Shop<i class="fa fa-angle-down"></i></a>
                                     <ul role="menu" class="sub-menu">
-                                        <li><a href="shop.html">Products</a></li>
-                    <li><a href="product-details.html">Product Details</a></li> 
-                    <li><a href="checkout.html">Checkout</a></li> 
-                    <li><a href="cart.html">Cart</a></li> 
+                                        <li><a href="{% url 'eshopper:product_list' %}">Products</a></li>
+                  
+                    <li><a href="{% url 'eshopper:order_create' %}">Checkout</a></li> 
+                    <li><a href="{% url 'eshopper:cart_detail' %}">Cart</a></li> 
                      
                                     </ul>
                                 </li> 
-                <li class="dropdown"><a href="#">Blog<i class="fa fa-angle-down"></i></a>
+               <!--  <li class="dropdown"><a href="#">Blog<i class="fa fa-angle-down"></i></a>
                                     <ul role="menu" class="sub-menu">
                                         <li><a href="blog.html">Blog List</a></li>
                     <li><a href="blog-single.html">Blog Single</a></li>
                                     </ul>
-                                </li> 
+                                </li>  -->
                
                 <li><a href="{% url 'eshopper:contact' %}">Contact</a></li>
               </ul>
             </div>
           </div>
           <div class="col-sm-3">
-            <div class="search_box pull-right">
-              <input type="text" placeholder="Search"/>
-            </div>
+            
+            <form type="get" action="{% url 'eshopper:search' %}">
+             <div class="input-group">
+              
+              <input type="text" class="form-control" name="search"  placeholder="Search...">
+              <span class="input-group-btn"> 
+              <button class="btn btn-secondary" type="submit" ><i class="fa fa-search"></i></button></span>
+              
+             </div>
+            </form>
+
+            <!-- <div class="search_box pull-right"><a href="{% url 'eshopper:search' %}">
+              <input type="text" placeholder="Search"/></a>
+            </div> -->
           </div>
         </div>
       </div>
@@ -153,7 +170,7 @@
                 {% block content %}
                 {% endblock %}
 
-      <footer id="footer"><!--Footer-->
+    <footer id="footer"><!--Footer-->
     <div class="footer-top">
       <div class="container">
         <div class="row">
@@ -168,7 +185,7 @@
               <div class="video-gallery text-center">
                 <a href="#">
                   <div class="iframe-img">
-                    <img src="images/home/iframe1.png" alt="" />
+                    <img src="{% static 'images/home/iframe1.png' %}" alt="" />
                   </div>
                   <div class="overlay-icon">
                     <i class="fa fa-play-circle-o"></i>
@@ -183,7 +200,7 @@
               <div class="video-gallery text-center">
                 <a href="#">
                   <div class="iframe-img">
-                    <img src="images/home/iframe2.png" alt="" />
+                    <img src="{% static 'images/home/iframe2.png' %}" alt="" />
                   </div>
                   <div class="overlay-icon">
                     <i class="fa fa-play-circle-o"></i>
@@ -198,7 +215,7 @@
               <div class="video-gallery text-center">
                 <a href="#">
                   <div class="iframe-img">
-                    <img src="images/home/iframe3.png" alt="" />
+                    <img src="{% static 'images/home/iframe3.png' %}" alt="" />
                   </div>
                   <div class="overlay-icon">
                     <i class="fa fa-play-circle-o"></i>
@@ -213,7 +230,7 @@
               <div class="video-gallery text-center">
                 <a href="#">
                   <div class="iframe-img">
-                    <img src="images/home/iframe4.png" alt="" />
+                    <img src="{% static 'images/home/iframe4.png' %}" alt="" />
                   </div>
                   <div class="overlay-icon">
                     <i class="fa fa-play-circle-o"></i>
@@ -226,7 +243,7 @@
           </div>
           <div class="col-sm-3">
             <div class="address">
-              <img src="images/home/map.png" alt="" />
+              <img src="{% static 'images/home/map.png' %}" alt="" />
               <p>505 S Atlantic Ave Virginia Beach, VA(Virginia)</p>
             </div>
           </div>
@@ -311,13 +328,12 @@
     
   </footer><!--/Footer-->
   
-
-  
-    <script src="{% static 'js/jquery.js' %}"></script>
+  <script src="{% static 'js/jquery.js' %}"></script>
   <script src="{% static 'js/bootstrap.min.js' %}"></script>
   <script src="{% static 'js/jquery.scrollUp.min.js' %}"></script>
   <script src="{% static 'js/price-range.js' %}"></script>
-    <script src="{% static 'js/jquery.prettyPhoto.js' %}"></script>
-    <script src="{% static 'js/main.js' %}"></script>
+  <script src="{% static 'js/jquery.prettyPhoto.js' %}"></script>
+  <script src="{% static 'js/main.js' %}"></script>
+  {% block extra_js %}{% endblock %}
 </body>
 </html>

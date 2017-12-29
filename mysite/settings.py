@@ -40,8 +40,13 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'social_django',
+    'ckeditor',
+    'ckeditor_uploader',
     'eshopper',
-    
+    'dashboard',
+    'paypal.standard.ipn',
+    'payment',
     
 ]
 
@@ -53,7 +58,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    
+    'social_django.middleware.SocialAuthExceptionMiddleware',
    
 ]
 
@@ -72,11 +77,21 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'social_django.context_processors.backends', 
+                'social_django.context_processors.login_redirect', 
                 
             ],
         },
     },
 ]
+
+AUTHENTICATION_BACKENDS = (
+    'social_core.backends.github.GithubOAuth2',
+    'social_core.backends.twitter.TwitterOAuth',
+    'social_core.backends.facebook.FacebookOAuth2',
+
+    'django.contrib.auth.backends.ModelBackend',
+)
 
 WSGI_APPLICATION = 'mysite.wsgi.application'
 
@@ -130,6 +145,8 @@ USE_TZ = False
 
 STATIC_URL = '/static/'
 
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+
 MEDIA_URL = '/media/'
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
@@ -139,5 +156,29 @@ CART_SESSION_ID = 'cart'
 EMAIL_USE_TLS = True
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_HOST_USER = 'akshayauti005@gmail.com'
-EMAIL_HOST_PASSWORD = 'hondshine'
+EMAIL_HOST_PASSWORD = 'hondashine'
 EMAIL_PORT = 587
+
+#django-paypal settings
+PAYPAL_RECEIVER_EMAIL = 'akshayauti005@gmail.com'
+PAYPAL_TEST = True
+
+SOCIAL_AUTH_FACEBOOK_KEY = '314041042336149'  # App ID
+SOCIAL_AUTH_FACEBOOK_SECRET = '2366c51029b9092c96ccd8c45e4f91fd'  # App Secret
+
+SOCIAL_AUTH_TWITTER_KEY = 'XKORcPMtMVk6RjEK0t533rPOa'
+SOCIAL_AUTH_TWITTER_SECRET = 'sreUAUZrQwr1yofTbRjUGZ0XX0RjujOHTqC8QXaJIRrgI5W0dH'
+
+
+CKEDITOR_UPLOAD_SLUGIFY_FILENAME = False
+CKEDITOR_JQUERY_URL = 'ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js'
+CKEDITOR_IMAGE_BACKEND = "pillow"
+CKEDITOR_UPLOAD_SLUGIFY_FILENAME = True
+CKEDITOR_UPLOAD_PATH = "image_upload/"
+
+CKEDITOR_CONFIGS = {
+    'default': {
+        'toolbar': 'full',
+        
+    },
+}

@@ -16,8 +16,9 @@
 	   {% for c in categories %}
 		<div class="panel panel-default">
 		 <div class="panel-heading">
-		  <h4 class="panel-title" {% if category.slug == c.slug %} class="selected" 
-	   {% endif %}>
+		  <h4 class="panel-title"> 
+		{% if category.slug == c.slug %}
+		{% endif %}
 		   <a href="{{ c.get_absolute_url }}">{{ c.name }}</a>
 		  </h4>
 		 </div>
@@ -30,8 +31,8 @@
 	<div class="product-details"><!--product-details-->
 	 <div class="col-sm-5">
 	  <div class="view-product">
-	  {% if product.image %}
-	  <img src="{{ product.image.url }}">
+	  {% if product.get_product_images %}
+	  <img src="{{ product.get_product_images.1.image.url }}">
 	  {% else %}
 	  <img src="{% static 'images/404/404.png' %}">
 	  {% endif %}
@@ -40,27 +41,37 @@
 	 </div>
 	 <div class="col-sm-7">
 	  <div class="product-information"><!--/product-information-->
-	   <img src="images/product-details/new.jpg" class="newarrival" alt="" />
+	   <img src="{% static 'images/product-details/new.jpg' %}" class="newarrival" alt="" />
+	   
 	   <h2>{{ product.name }}</h2>
-	   <img src="images/product-details/rating.png" alt="" />
-	   
-		<span>${{ product.price }}</span>
-		 <form action="{% url 'eshopper:cart_add' product.id %}" method="post">
-		 {{ cart_product_form }}
-		 {% csrf_token %}
-		 <input type="submit" value="Add to cart">
-		 </form>
-	   
-	   <b>Availability:{{ product.quantity }}</b> In Stock
+	   <p>Web ID: {{ product.id }}</p>
+	   <img src="{% static 'images/product-details/rating.png' %}" alt="" />
+
+	    <span>
+			<span>US ${{ product.price }}</span>
+	   		<fieldset>	
+	   		<form action="{% url 'eshopper:cart_add' product.id %}" method="post">
+	   		<label for="quantity">Quantity:</label>
+	   		<input name='quantity'>	 	
+	   		{{ cart_product_form.update }}
+		 	<button type="submit" class="btn btn-default cart">
+			<i class="fa fa-shopping-cart"></i> Add to cart</button>
+			{% csrf_token %}
+			</form>
+		 	</fieldset>		
+		</span>
+	   <p><b>Availability:</b> In Stock</p>
 	   <p><b>Condition:</b> New</p>
 	   <p><b>Brand:</b> E-SHOPPER</p>
-	   <p><b>Description:</b>{{ product.short_description|linebreaks }}</p>
+	   <!-- <p><b>Description:</b>{{ product.short_description|linebreaks }}</p> -->
+	   <a href=""><img src="{% static 'images/product-details/share.png' %}" class="share img-responsive"  alt="" /></a>
 	  </div><!--/product-information-->
 	 </div>
-	</div><!--/product-details-->
+	<!--/product-details-->
    </div>
   </div>
  </div>
+</div>
 </section>
 
 {% endblock content %}	

@@ -22,8 +22,10 @@ from django.conf.urls.static import static
 
 
 urlpatterns = [
+	url(r'^paypal/', include('paypal.standard.ipn.urls')),
+	url(r'^payment/', include('payment.urls')),
 	url(r'', include('eshopper.urls')),
-	
+	url(r'^oauth/', include('social_django.urls', namespace='social')),
 	url(r'^admin/', admin.site.urls),
 ]
 

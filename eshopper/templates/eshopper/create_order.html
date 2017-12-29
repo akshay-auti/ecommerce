@@ -3,22 +3,20 @@
 {% load static %}
 
 {% block content %}
+<section id="cart_items">
+		<div class="container">
+			<div class="breadcrumbs">
+				<ol class="breadcrumb">
+				  <li><a href="#">Home</a></li>
+				  <li class="active">Check out</li>
+				</ol>
+			</div>
+	<h1>{{ request.user.username }}</h1>
+<h3>Your Order</h3>
 
-	<h1>Checkout</h1>
-
-	<div class="order-info">
-		<h3>Your order</h3>
-		<ul>
-			{% for item in cart %}
-				<li>{{ item.quantity }}x {{ item.product.name }}<span>${{ item.total_price }}</span></li>
-			{% endfor %}
-				
-		</ul>
-		<p>Total: ${{ cart.get_total_price }}</p>
-
-	</div>
-	<form action="." method="post" class="order-form">
-		
+	
+	<!-- <form action="." method="post" class="order-form"> -->
+		<!-- 
 		{% for field in form %}
       <p>
         {{ field.label_tag }}<br>
@@ -30,8 +28,143 @@
           <p style="color: red">{{ error }}</p>
         {% endfor %}
       </p>
-      {% endfor %}
-		<p><input type="submit"  value="place order" name=""></p>
-		{% csrf_token %}
-	</form>
-{% endblock %}	
+      {% endfor %} -->
+
+
+
+      <div class="step-one">
+				<h2 class="heading">Step1</h2>
+			</div>
+			<div class="shopper-informations">
+				<div class="row">
+				 <div class="col-sm-5 clearfix">
+					<div class="form-two">
+					 <form action="." method="post" class="order-form">
+					  <input type="text"  name='address' placeholder="Address *">
+					  <p>{{ form.errors.address }}</p>
+					  <input type="text" name='city' placeholder="City">
+					  <p>{{ form.errors.city }}</p>
+					  <input type="text" name='state' placeholder="State *">
+					  <p>{{ form.errors.state }}</p>
+					  <input type="text" name='country' placeholder="Country">
+					  <p>{{ form.errors.country }}</p>
+					  <input type="text" name='zipcode' placeholder="Zipcode">
+					  <p>{{ form.errors.zipcode }}</p>
+					   {% if cart %}
+						<p><input type="submit" class="btn btn-default check_out" style="margin-left:15px;margin-top:0px;" value="Continue" name=""></p>
+					  {% else %}
+						<a class="btn btn-default check_out" href="{% url 'eshopper:cart_add' %}" class='button'>Add the products</a>
+					  {% endif %}
+					  {% csrf_token %}
+										
+					</div>
+				</div>
+
+			    <div class="col-sm-4">
+			    <div class="order-message">
+				 <p>Shipping Order</p>
+				 <textarea name="message"  placeholder="Notes about your order, Special Notes for Delivery" rows="16"></textarea>
+				 <!-- <label><input type="checkbox"> Shipping to bill address</label> -->
+				</form>
+				</div>	
+			    </div>
+
+			</div>
+		</div>
+
+
+<!-- {% if cart %}
+	<a class="btn btn-default check_out" href="{% url 'eshopper:order_create' %}" class='button'>Checkout</a>
+	{% endif %} -->
+	
+ 	<div class="review-payment">
+  		<h2>Review & Payment</h2>
+    </div>
+    <div class="table-responsive cart_info">
+     <table class="table table-condensed">
+   	  <thead>
+	   <tr class="cart_menu">
+	    <td class="image">Item</td>
+	    <td class="description"></td>
+	    <td class="price">Price</td>
+	    <td class="quantity">Quantity</td>
+	    <td class="price">Total</td>
+	    <td class="cart_delete"></td>
+	   </tr>
+	  </thead>
+	  <tbody>
+	  {% for item in cart %}
+	  {% with product=item.product %}
+	   <tr>
+	    <td class="cart_product">
+	     <a href="{{ product.get_absolute_url }}">
+		  {% if product.get_product_images %}
+	  	  <img src="{{ product.get_product_images.0.image.url }}" height="85" width='83'>
+	  	  {% else %}
+	      <img src="{% static 'images/404/404.png' %}" height="85" width='83'>
+	      {% endif %}
+		 </a>
+	    </td>
+	    <td class="cart_description">
+	   	 <h4>{{ product.name }}</h4>
+	   	 <p>Web ID:{{ product.id }}</p>
+	    </td>
+	    <td class="cart_price"><p>${{ item.price }}</p></td>
+	    <td class="cart_quantity">
+		<div class="cart_quantity_button">
+		 <div class="input-group">
+		  <span class="input-group-btn">
+		   
+		   
+		   <a class='cart_quantity_down' onclick="decreaseValue(event)" value='Decrease value'>-</a>
+		   <input class="cart_quantity_input" type="text" name="quantity" id="quantity" value="{{ item.quantity }}" autocomplete="off" size="2">
+		   <a class='cart_quantity_up' onclick="increaseValue(event)" value='Increase value'>+</a>
+		  
+		  
+		 
+		  </span>
+		 </div>
+	    </div>
+	    </td>
+	    <td class="cart_total">
+	   	 <p class="cart_total_price">${{ item.total_price }}</p></td>
+	    <td class="cart_delete"><a class="cart_quantity_delete" href="{% url 'eshopper:cart_remove' product.id %}"><i class="fa fa-times"></i></a></td>
+	   </tr>
+	   {% endwith %}
+	   {% endfor %}
+	   <tr>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td colsapn="2">
+		 <table class="table table-condensed total-result">
+		  <tr>
+			<td>Cart Sub Total </td>
+			<td>${{ cart.get_total_price }}</td>
+		  </tr>
+		  <tr>
+		    <td>Eco Tax </td>
+			<td>$2</td>
+		  </tr>
+		  <tr class="shipping-cost">
+			<td>Shipping cost</td>
+			<td>Free</td>
+		  </tr>
+		  {% if cart.coupon %}
+		  <tr>
+		  	<td>{{ cart.coupon.discount }}% off coupon</td>
+		  	<td>${{ cart.get_discount|floatformat:'2'}}</td>
+		  </tr>
+		  {% endif %}
+		  <tr>
+			<td>Total</td>
+			<td><span>${{ cart.get_total_price_with_tax|floatformat:'2' }}</span></td>
+		  </tr>
+		 </table>
+		</td>
+	   </tr>
+    </tbody>
+   </table>
+  </div>
+{% endblock %} 	

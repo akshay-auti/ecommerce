@@ -6,7 +6,9 @@
 	Your shopping cart 
 {% endblock title %}
 
+
 {% block content %}
+{% if cart %}
 <section id="cart_items">
  <div class="container">
   <div class="breadcrumbs">
@@ -19,12 +21,12 @@
    <table class="table table-condensed">
    	<thead>
 	 <tr class="cart_menu">
-	  <td class="image">Image</td>
-	  <td class="description">Product</td>
-	  <td class="quantity">Quantity</td>
-	  <td class="price">Unit Price</td>
+	  <td class="image">Item</td>
+	  <td class="description"></td>
 	  <td class="price">Price</td>
-	  <td class="cart_delete">Remove</td>
+	  <td class="quantity">Quantity</td>
+	  <td class="price">Total</td>
+	  <td class="cart_delete"></td>
 	 </tr>
 	</thead>
 	<tbody>
@@ -33,40 +35,182 @@
 	  <tr>
 	   <td class="cart_product">
 	    <a href="{{ product.get_absolute_url }}">
-		 <img src="{% if product.image %}{{ product.image.url }}{% else %}{% static 'imagee/404/404.png'%}{% endif %}">
+		 {% if product.get_product_images %}
+	  	 <img src="{{ product.get_product_images.0.image.url }}" height="85" width='83'>
+	  	 {% else %}
+	     <img src="{% static 'images/404/404.png' %}" height="85" width='83'>
+	     {% endif %}
 		</a>
 	   </td>
-	   <td class="cart_description"><h4>{{ product.name }}</h4></td>
+	   <td class="cart_description">
+	   	<h4>{{ product.name }}</h4>
+	   	<p>Web ID:{{ product.id }}</p>
+	   </td>
+	   <td class="cart_price"><p>${{ item.price }}</p></td>
 	   <td class="cart_quantity">
 		<div class="cart_quantity_button">
-		 <form action="{% url 'eshopper:cart_add' product.id %}" method='post'>
-		  {{ item.update_quantity_form.quantity }}
-		  {{ item.update_quantity_form.update }}
-		  <input class="btn btn-default update" type="submit" name="" value="Update"/>
-		  {% csrf_token %}
-		 </form>
+		 <div class="input-group">
+		 	<span class="input-group-btn">
+		   <form id="myform" action="{% url 'eshopper:cart_add' product.id %}" method='post'>
+		   <a style='cursor: pointer;' class='cart_quantity_down' onclick="decreaseValue(event)" value='Decrease value'>-</a>
+		   <input class="cart_quantity_input" type="text" name="quantity" id="quantity" value="{{ item.quantity }}" autocomplete="off" size="2">
+		   <a style='cursor: pointer;' class='cart_quantity_up' onclick="increaseValue(event)" value='Increase value'>+</a>
+		    {{ item.update_quantity_form.update }}
+		    {% csrf_token %}
+		   </form>
+		   </span>
+		</div>
 		</div>
 	   </td>
-	   <td class="cart_total_price">${{ item.price }}</td>
-	   <td class="cart_total_price">${{ item.total_price }}</td>
+	   
+	   <td class="cart_total">
+	   	<p class="cart_total_price">${{ item.total_price }}</p></td>
 	   <td class="cart_delete"><a class="cart_quantity_delete" href="{% url 'eshopper:cart_remove' product.id %}"><i class="fa fa-times"></i></a></td>
 	  </tr>
 	 {% endwith %}
 	{% endfor %}
     </tbody>
    </table>
+  </div>
+</div>
+</section>   
+<section id="do_action">
+   	<div class="container">
+   		<div class="heading">
+				<h3>What would you like to do next?</h3>
+				<p>Choose if you have a discount code you want to use.</p>
+		</div>
+   <div class='row'>	
+   <div class="col-sm-6">
+   	
+   	<div class="chose_area">
+	 <ul class="user_option">
+	 
+	{% if messages %}
+		<li class="messages">
+    	{% for message in messages %}
+    	<li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+    	{% endfor %}
+		</li>
+	{% else %}
+	 	{% if request.session.coupon_id %}
+	 		<p>Coupon applied sucessfully.</p>	
+		{% else %}
+		<li>
+	  	{% if form.errors %}
+	  	<p>{{ form.errors }}</p>
+	  	{% endif %}
+	     <form action="{% url 'eshopper:apply' %}" method="post">
+	     
+	     <label>Use Coupon Code</label>
+	     {% for field in coupon_apply_form %}
+      		<p>
+        		{{ field.label_tag }}<br>
+        		{{ field }}
+        
+      		</p>
+      	 {% endfor %}
+	     <input class="btn btn-default check_out" type="submit" value='Continue' name="">
+   		 {% csrf_token %}
+   		 </form>
+	  	</li>
+	  	{% endif %}
+	 {% endif %}
+	 </ul>
+						
+	<!-- <a class="btn btn-default update" href="">Get Quotes</a>
+	<a class="btn btn-default check_out" href="">Continue</a>
+	</div>
+   	<table>
+   		<tbody>
+   	{% if cart.coupon %}
+		<tr>
+			<td>Subtotal</td>
+			<td colspan="4"></td>
+			<td>${{ cart.get_total_price }}</td>
+		</tr>
+		<tr>
+			{% with code=cart.coupon.code discount=cart.coupon.discount %}
+			<td>{{ code }} coupon ({{ discount }}% off)</td>
+			{% endwith %}
+			<td colspan="4"></td>
+			<td>${{ cart.get_discount|floatformat:'2' }}</td>
+		</tr>
+	{% endif %}
+	<tr>
+		<td>Total</td>
+		<td colspan="4"></td>
+		<td>${{ cart.get_total_price_after_discount|floatformat:'2' }}</td>
+	</tr>	
+    </tbody>
+   </table>
+
+   <p> Apply a coupon:</p>
+   <form action="{% url 'eshopper:apply' %}" method="post">
+   	{{ coupon_apply_form }}
+   	<input type="submit" value='Apply' name="">
+   	{% csrf_token %}
+   </form> -->
+   </div>
+
+  </div>
+
    <div class="col-sm-6">
 	<div class="total_area">
-	 <ul>	
-	  <li>Total<span>${{ cart.get_total_price }}</span></li>
+	 <ul>
+	  <li>Cart Sub Total <span>${{ cart.get_total_price }}</span></li>
+	  <li>Eco Tax <span>$2</span></li>
+	  {% if cart.coupon %}
+	  <li>{{ cart.coupon.discount }}% off coupon
+      <span>${{ cart.get_discount|floatformat:'2'}}</span>
+      <td class="cart_delete"><a class="cart_quantity_delete" href="{% url 'eshopper:coupon_remove' %}"><i class="fa fa-times"></i></a></td>
+	  </li>
+	  {% endif %}	
+	  <li>Total<span>${{ cart.get_total_price_with_tax }}</span></li>
 	 </ul> 	
-	</div>	
-	<a class="btn btn-default check_out" href="{% url 'eshopper:product_list' %}" class='button-right'>Continue Shopping</a>
+		
+	<button form="myform" type='submit' class="btn btn-default check_out" style="margin-left: 40px">Update</button>
 	{% if cart %}
-	<a class="btn btn-default check_out" href="{% url 'eshopper:order_create' %}" class='button'>Checkout</a>
+	<a class="btn btn-default check_out" href="{% if user.is_authenticated %}{% url 'eshopper:order_create' %}{% else %}
+	{% url 'eshopper:login' %}{% endif %}" class='button'>Checkout</a>
+	{% else %}
+	<a class="btn btn-default check_out" href="{% url 'eshopper:product_list' %}" class='button-right'>Continue</a>
 	{% endif %}
+	 
    </div>
+   </div>
+</div>
   </div>
- </div>
-</section>
-{% endblock %}	
+ </section>
+{% else %}
+<div style="position: center;">
+<img src="{% static 'images/empty_cart.jpeg' %}">
+<p><strong>Your cart is empty</strong></p>
+</div>
+{% endif %}
+{% endblock %}
+
+
+{% block extra_js %}
+	{{block.super}}			
+	<script>
+		function increaseValue(ev) {
+			ev.preventDefault();
+		 	var value = parseInt(document.getElementById('quantity').value,10);
+		 	value = isNaN(value) ? 0 : value ;
+		 	value++;
+		 	document.getElementById('quantity').value = value;
+		}	
+
+		function decreaseValue(ev){
+			ev.preventDefault();
+		 	var value = parseInt(document.getElementById('quantity').value,10);
+		 	value = isNaN(value) ? 0 : value ;
+		 	value < 1 ? value = 1 : '';
+		 	value--;
+		 	document.getElementById('quantity').value = value;
+		}
+	</script>
+{% endblock %}
+
+
